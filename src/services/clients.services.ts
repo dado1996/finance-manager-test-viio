@@ -1,9 +1,28 @@
 import { CreateClientsInterface } from "../interfaces/clients.interface";
 import { prisma } from "../lib/prisma";
-import { hash } from "../utils/hashing";
+import { compare, hash } from "../utils/hashing";
+import { generateToken } from "../lib/jwt";
 
 class ClientsServices {
   constructor() {}
+
+  async login(email: string, password: string) {
+    const getUser = await prisma.clients.findFirst({
+      where: {
+        email: email
+      }
+    });
+
+    if (!getUser) {
+      throw new Error('Email doesn\'t exists');
+    }
+
+    if (!compare(password, getUser.password)) {
+      throw new Error('Invalid password');
+    }
+
+    return generateToken({ name: getUser.name, email: getUser.email });
+  }
 
   async get() {
     const allUsers = await prisma.clients.findMany();

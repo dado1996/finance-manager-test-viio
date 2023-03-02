@@ -24,7 +24,7 @@ model Clients {
 
 model Accounts {
   id Int @id @default(autoincrement())
-  account_id Int @unique
+  accountId Int @unique
   client Clients @relation(fields: [clientId], references: [id])
   clientId Int
   transactions Transactions[]
@@ -37,6 +37,7 @@ model Accounts {
 
 model Transactions {
   id Int @id @default(autoincrement())
+  uniqueId String @unique
   amount Float
   clientReceiver Clients @relation(fields: [clientReceiverId], references: [id])
   clientReceiverId Int

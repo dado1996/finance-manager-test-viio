@@ -28,6 +28,8 @@ model Accounts {
   client Clients @relation(fields: [clientId], references: [id])
   clientId Int
   transactions Transactions[]
+  totalValue Float
+  bankName String
   status Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

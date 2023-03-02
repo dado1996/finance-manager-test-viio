@@ -10,4 +10,7 @@ function routesApi(app: Express) {
   router.use('/accounts', AccountsRouter);
   router.use('/transactions', TransactionsRouter);
 
+  app.use('/api/v1', router);
 }
+
+export default routesApi;

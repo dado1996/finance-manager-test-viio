@@ -1,0 +1,5 @@
+.vscode/
+dist/
+.env
+financemanage20237-secret.txt
+node_modules/

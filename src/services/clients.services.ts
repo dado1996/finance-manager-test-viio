@@ -25,12 +25,42 @@ class ClientsServices {
   }
 
   async get() {
-    const allUsers = await prisma.clients.findMany();
-
+    const allUsers = await prisma.clients.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        status: true,
+      },
+      take: 100,
+      orderBy: {
+        email: 'asc',
+      }
+    });
     return allUsers;
   }
 
-  async getFirst(id: number) {}
+  async getFirst(id: number) {
+    const user = await prisma.clients.findFirst({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        id: id,
+        status: true,
+      }
+    });
+
+    return user;
+  }
 
   async store(body: CreateClientsInterface) {
     const { name, email, password } = body;
@@ -56,9 +86,71 @@ class ClientsServices {
     return newClient;
   }
 
-  async edit(id: number, body: any) {}
+  async edit(id: number, body: CreateClientsInterface) {
+    const { name, email, password } = body;
 
-  async remove(id: number) {}
+    const currentEmail = await prisma.clients.findFirst({
+      select: {
+        email: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const checkIfEmailExists = await prisma.clients.findFirst({
+      where: {
+        AND: [
+          {
+            email: email,
+          },
+          {
+            NOT: {
+              email: currentEmail?.email,
+            }
+          }
+        ]
+      }
+    });
+
+    if (checkIfEmailExists) {
+      throw new Error('Email already registered');
+    }
+
+    const editedUser = await prisma.clients.update({
+      data: {
+        name: name,
+        email:  email,
+        password: hash(password),
+        updatedAt: new Date()
+      },
+      where: {
+        id: id,
+      },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
+
+    return editedUser;
+  }
+
+  async remove(id: number) {
+    const result = await prisma.clients.update({
+      data: {
+        status: false,
+      },
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+      }
+    });
+
+    return result;
+  }
 }
 
 export default ClientsServices;

@@ -13,9 +13,10 @@ datasource db {
 model Clients {
   id  Int @id @default(autoincrement())
   email String @unique
-  password String
+  password String @db.VarChar(255)
   name String?
   accounts Accounts[]
+  transactions Transactions[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -25,6 +26,7 @@ model Accounts {
   account_id Int @unique
   client Clients @relation(fields: [clientId], references: [id])
   clientId Int
+  transactions Transactions[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -32,6 +34,10 @@ model Accounts {
 model Transactions {
   id Int @id @default(autoincrement())
   amount Float
+  clientReceiver Clients @relation(fields: [clientReceiverId], references: [id])
+  clientReceiverId Int
+  account Accounts @relation(fields: [accountId], references: [id])
+  accountId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }

@@ -17,6 +17,7 @@ model Clients {
   name String?
   accounts Accounts[]
   transactions Transactions[]
+  status Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -27,6 +28,7 @@ model Accounts {
   client Clients @relation(fields: [clientId], references: [id])
   clientId Int
   transactions Transactions[]
+  status Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -38,6 +40,13 @@ model Transactions {
   clientReceiverId Int
   account Accounts @relation(fields: [accountId], references: [id])
   accountId Int
+  status TransactionStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+}
+
+enum TransactionStatus {
+  PENDING
+  ONHOLD
+  DONE
 }

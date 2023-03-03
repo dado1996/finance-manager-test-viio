@@ -16,7 +16,6 @@ model Clients {
   password String @db.VarChar(255)
   name String?
   accounts Accounts[]
-  transactions Transactions[]
   status Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -27,7 +26,8 @@ model Accounts {
   accountId Int @unique
   client Clients @relation(fields: [clientId], references: [id])
   clientId Int
-  transactions Transactions[]
+  transactionsSender Transactions[] @relation("sender")
+  transactionsReceiver Transactions[] @relation("receiver")
   totalValue Float
   bankName String
   status Boolean @default(true)
@@ -39,10 +39,10 @@ model Transactions {
   id Int @id @default(autoincrement())
   uniqueId String @unique
   amount Float
-  clientReceiver Clients @relation(fields: [clientReceiverId], references: [id])
-  clientReceiverId Int
-  account Accounts @relation(fields: [accountId], references: [id])
-  accountId Int
+  accountSender Accounts @relation("sender", fields: [accountSenderId], references: [id])
+  accountSenderId Int
+  accountReceiver Accounts @relation("receiver", fields: [accountReceiverId], references: [id])
+  accountReceiverId Int
   status TransactionStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -52,4 +52,5 @@ enum TransactionStatus {
   PENDING
   ONHOLD
   DONE
+  CANCELED
 }

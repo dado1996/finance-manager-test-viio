@@ -1,4 +1,4 @@
-import { CreateClientsInterface } from "../interfaces/clients.interface";
+import { ClientsInterface, CreateClientsInterface } from "../interfaces/clients.interface";
 import { prisma } from "../lib/prisma";
 import { compare, hash } from "../utils/hashing";
 import { generateToken } from "../lib/jwt";
@@ -42,7 +42,7 @@ class ClientsServices {
         email: "asc",
       },
     });
-    return allUsers.map((user) => ({
+    return allUsers.map((user: Omit<ClientsInterface, "password">) => ({
       ...user,
       createdAt: moment(user.createdAt).format("YYYY-MM-DD"),
       updatedAt: moment(user.updatedAt).format("YYYY-MM-DD"),

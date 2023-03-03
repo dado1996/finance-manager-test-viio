@@ -2,6 +2,12 @@ import { AccountsInterface, CreateAccountsInterface, EditAccountInterface } from
 import { prisma } from "../lib/prisma";
 import moment from "moment";
 
+type AccountsInterfaceDisplay = {
+  accountId: number;
+  bankName: string;
+  totalValue: number;
+};
+
 class AccountsServices {
   constructor() {}
 
@@ -31,7 +37,7 @@ class AccountsServices {
       },
     });
 
-    return accounts.map(acc => ({
+    return accounts.map((acc: AccountsInterface) => ({
       ...acc,
       createdAt: moment(acc.createdAt).format("YYYY-MM-DD"),
       updatedAt: moment(acc.updatedAt).format("YYYY-MM-DD"),
@@ -52,7 +58,7 @@ class AccountsServices {
 
     return {
       accounts,
-      generalBalance: accounts.reduce((a, b) => ({
+      generalBalance: accounts.reduce((a: AccountsInterfaceDisplay, b: AccountsInterfaceDisplay) => ({
         ...a,
         totalValue: a.totalValue + b.totalValue
       })).totalValue,
@@ -139,6 +145,10 @@ class AccountsServices {
     });
 
     return result;
+  }
+
+  async linkBankAccount() {
+    // const response = await fetch();
   }
 
   async edit(accountId: number, body: EditAccountInterface): Promise<AccountsInterface> {

@@ -4,9 +4,25 @@ import { v4 as uuid } from "uuid";
 import {
   CreateTransactionsInterface,
   EditTransactionsInterface,
+  TransactionsInterface,
 } from "../interfaces/transactions.interface";
-import ClientsServices from "./clients.services";
 import AccountsServices from "./accounts.services";
+
+type TransactionsInterfaceDisplay = {
+  id: number;
+  uniqueId: string;
+  amount: number;
+  createdAt: Date;
+  updatedAt: Date;
+  accountSender: {
+    accountId: number;
+    bankName: string;
+  };
+  accountReceiver: {
+    accountId: number;
+    bankName: string;
+  };
+};
 
 class TransactionsServices {
   constructor() {}
@@ -16,6 +32,7 @@ class TransactionsServices {
       select: {
         id: true,
         uniqueId: true,
+        amount: true,
         accountSender: {
           select: {
             accountId: true,
@@ -42,7 +59,7 @@ class TransactionsServices {
       },
     });
 
-    return transactions.map((transact) => ({
+    return transactions.map((transact: TransactionsInterfaceDisplay) => ({
       ...transact,
       createdAt: moment(transact.createdAt).format("YYYY-MM-DD"),
       updatedAt: moment(transact.updatedAt).format("YYYY-MM-DD"),

@@ -7,16 +7,17 @@ Author: Diego Alejandro Delgado Otálora
 Before running the project you need to configure environment variables
 For that you can use the .env.example as a guide
 
-Then you need to set up your database by running
-```
-npx prisma generate
-```
-
 You can run the project either by using commands or docker
 ```
 npm run build
 npm run start
 ```
+
+Then you need to set up your database by running
+```
+npx prisma generate
+```
+
 or (assuming you have docker installed on your computer)
 ```
 docker-compose up

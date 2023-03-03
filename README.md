@@ -4,6 +4,14 @@ Author: Diego Alejandro Delgado Otálora
 
 ---
 ## Run the project
+Before running the project you need to configure environment variables
+For that you can use the .env.example as a guide
+
+Then you need to set up your database by running
+```
+npx prisma generate
+```
+
 You can run the project either by using commands or docker
 ```
 npm run build
@@ -15,3 +23,10 @@ docker-compose up
 ```
 
 You can use the .env.example to set up the environment variables for the project
+
+---
+
+## Run the tests
+```
+npm run test
+```

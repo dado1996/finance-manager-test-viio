@@ -21,3 +21,7 @@ export const EditAccountSchemaBody = Joi.object({
   clientEmail: clientEmail.required(),
   totalValue: initialDeposit.required(),
 });
+
+export const LinkBankSchema = Joi.object({
+
+});

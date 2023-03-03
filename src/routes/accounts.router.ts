@@ -22,6 +22,19 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+router.get("/general/:id", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const result = await service.getGeneralBalance(parseInt(id));
+    res.status(200).json({
+      status: 'success',
+      data: result,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+});
+
 router.get("/:accountId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { accountId } = req.params;

@@ -38,6 +38,27 @@ class AccountsServices {
     }));
   }
 
+  async getGeneralBalance(id: number) {
+    const accounts = await prisma.accounts.findMany({
+      select: {
+        accountId: true,
+        bankName: true,
+        totalValue: true,
+      },
+      where: {
+        clientId: id,
+      }
+    });
+
+    return {
+      accounts,
+      generalBalance: accounts.reduce((a, b) => ({
+        ...a,
+        totalValue: a.totalValue + b.totalValue
+      })).totalValue,
+    }
+  }
+
   async getFirst(accountId: number) {
     const account = await prisma.accounts.findFirst({
       select: {
@@ -59,11 +80,11 @@ class AccountsServices {
       },
     });
 
-    return {
+    return account ? {
       ...account,
       createdAt: moment(account?.createdAt).format("YYYY-MM-DD"),
       updatedAt: moment(account?.updatedAt).format("YYYY-MM-DD"),
-    };
+    } : null;
   }
 
   async store(body: CreateAccountsInterface) {

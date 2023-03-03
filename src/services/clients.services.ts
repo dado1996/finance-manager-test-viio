@@ -2,6 +2,7 @@ import { CreateClientsInterface } from "../interfaces/clients.interface";
 import { prisma } from "../lib/prisma";
 import { compare, hash } from "../utils/hashing";
 import { generateToken } from "../lib/jwt";
+import moment from "moment";
 
 class ClientsServices {
   constructor() {}
@@ -9,16 +10,16 @@ class ClientsServices {
   async login(email: string, password: string) {
     const getUser = await prisma.clients.findFirst({
       where: {
-        email: email
-      }
+        email: email,
+      },
     });
 
     if (!getUser) {
-      throw new Error('Email doesn\'t exists');
+      throw new Error("Email doesn't exists");
     }
 
     if (!compare(password, getUser.password)) {
-      throw new Error('Invalid password');
+      throw new Error("Invalid password");
     }
 
     return generateToken({ name: getUser.name, email: getUser.email });
@@ -38,10 +39,14 @@ class ClientsServices {
       },
       take: 100,
       orderBy: {
-        email: 'asc',
-      }
+        email: "asc",
+      },
     });
-    return allUsers;
+    return allUsers.map((user) => ({
+      ...user,
+      createdAt: moment(user.createdAt).format("YYYY-MM-DD"),
+      updatedAt: moment(user.updatedAt).format("YYYY-MM-DD"),
+    }));
   }
 
   async getFirst(id: number) {
@@ -56,10 +61,32 @@ class ClientsServices {
       where: {
         id: id,
         status: true,
+      },
+    });
+
+    return user ? {
+      ...user,
+      createdAt: moment(user?.createdAt).format("YYYY-MM-DD"),
+      updatedAt: moment(user?.updatedAt).format("YYYY-MM-DD"),
+    } : null;
+  }
+
+  async getByEmail(email: string) {
+    const client = await prisma.clients.findFirst({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        status: true,
+        email: email,
       }
     });
 
-    return user;
+    return client;
   }
 
   async store(body: CreateClientsInterface) {
@@ -67,12 +94,12 @@ class ClientsServices {
 
     const checkIfEmailExists = await prisma.clients.findFirst({
       where: {
-        email: email
-      }
+        email: email,
+      },
     });
 
     if (checkIfEmailExists) {
-      throw new Error('Email already registered');
+      throw new Error("Email already registered");
     }
 
     const newClient = await prisma.clients.create({
@@ -80,7 +107,7 @@ class ClientsServices {
         name: name,
         email: email,
         password: hash(password),
-      }
+      },
     });
 
     return newClient;
@@ -107,22 +134,22 @@ class ClientsServices {
           {
             NOT: {
               email: currentEmail?.email,
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     });
 
     if (checkIfEmailExists) {
-      throw new Error('Email already registered');
+      throw new Error("Email already registered");
     }
 
     const editedUser = await prisma.clients.update({
       data: {
         name: name,
-        email:  email,
+        email: email,
         password: hash(password),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       where: {
         id: id,
@@ -130,10 +157,16 @@ class ClientsServices {
       select: {
         name: true,
         email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
-    return editedUser;
+    return {
+      ...editedUser,
+      createdAt: moment(editedUser.createdAt).format("YYYY-MM-DD"),
+      updatedAt: moment(editedUser.updatedAt).format("YYYY-MM-DD"),
+    };
   }
 
   async remove(id: number) {
@@ -146,7 +179,7 @@ class ClientsServices {
       },
       select: {
         id: true,
-      }
+      },
     });
 
     return result;

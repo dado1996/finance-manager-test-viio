@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const id = Joi.number();
-const accountId = Joi.string().length(8).pattern(/^[0-9]+$/).max(8);
+const accountId = Joi.string().length(8).pattern(/^[0-9]+$/);
 const bankName = Joi.string().max(32);
 const clientEmail = Joi.string().email();
 const initialDeposit = Joi.number().min(100);

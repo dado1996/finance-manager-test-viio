@@ -7,8 +7,8 @@ export interface AccountsInterface {
   transactions?: TransactionsInterface[];
   totalValue: number;
   bankName: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface CreateAccountsInterface

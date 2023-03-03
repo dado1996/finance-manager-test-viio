@@ -4,6 +4,7 @@ import {
   CreateAccountsSchema,
   EditAccountSchemaBody,
   EditAccountSchemaParams,
+  LinkBankSchema,
 } from "../schemas/accounts.schema";
 import AccountsService from "../services/accounts.services";
 
@@ -22,31 +23,37 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.get("/general/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const result = await service.getGeneralBalance(parseInt(id));
-    res.status(200).json({
-      status: 'success',
-      data: result,
-    });
-  } catch (error: any) {
-    next(error);
+router.get(
+  "/general/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const result = await service.getGeneralBalance(parseInt(id));
+      res.status(200).json({
+        status: "success",
+        data: result,
+      });
+    } catch (error: any) {
+      next(error);
+    }
   }
-});
+);
 
-router.get("/:accountId", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { accountId } = req.params;
-    const result = await service.getFirst(parseInt(accountId));
-    res.status(200).json({
-      status: "success",
-      data: result,
-    });
-  } catch (error: any) {
-    next(error);
+router.get(
+  "/:accountId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { accountId } = req.params;
+      const result = await service.getFirst(parseInt(accountId));
+      res.status(200).json({
+        status: "success",
+        data: result,
+      });
+    } catch (error: any) {
+      next(error);
+    }
   }
-});
+);
 
 router.post(
   "/",
@@ -65,6 +72,19 @@ router.post(
         data: result,
       });
     } catch (error: any) {}
+  }
+);
+
+router.post(
+  "/link-bank",
+  validationHandler(LinkBankSchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {} = req.body;
+      const result = await service.linkBankAccount();
+    } catch (error: any) {
+      
+    }
   }
 );
 
@@ -92,18 +112,21 @@ router.put(
   }
 );
 
-router.delete("/:accountId", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { accountId } = req.params;
-    const result = await service.remove(parseInt(accountId));
-    res.status(200).json({
-      status: 'success',
-      message: 'Account deleted successfully',
-      data: result,
-    });
-  } catch (error: any) {
-    next(error);
+router.delete(
+  "/:accountId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { accountId } = req.params;
+      const result = await service.remove(parseInt(accountId));
+      res.status(200).json({
+        status: "success",
+        message: "Account deleted successfully",
+        data: result,
+      });
+    } catch (error: any) {
+      next(error);
+    }
   }
-});
+);
 
 export default router;
